@@ -1,0 +1,17 @@
+# Node
+client/node_modules/
+client/build/
+client/.env
+
+# .NET
+server/bin/
+server/obj/
+server/*.db
+
+# VS Code
+.vscode/
+
+# Others
+*.user
+*.suo
+.DS_Store
