@@ -1,0 +1,29 @@
+.user-panel {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+    direction: rtl;
+}
+
+.user-panel input {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    flex-grow: 1;
+}
+
+.user-panel button {
+    padding: 6px 12px;
+    background-color: #ffb347;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.user-panel button:hover {
+    background-color: #f39c12;
+}
