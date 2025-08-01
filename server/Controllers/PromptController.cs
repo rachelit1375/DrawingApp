@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 
-namespace YourProjectNamespace.Controllers
+namespace DrawingApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

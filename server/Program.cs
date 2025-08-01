@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using DrawingApp.Models;
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // הוספת DbContext עם חיבור למסד הנתונים
@@ -32,5 +35,25 @@ app.UseHttpsRedirection();
 
 // מיפוי ה-Controllers (כל הפעולות מה-API)
 app.MapControllers();
+
+//יצירת נתונים התחלתיים
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+//    // בדיקה אם יש נתונים
+//    if (!context.Drawings.Any())
+//    {
+//        context.Drawings.Add(new Drawing
+//        {
+//            Id = Guid.NewGuid(),
+//            UserId = Guid.NewGuid(), // או ID של משתמש קיים אם יש
+//            Name = "ציור בדיקה",
+//            Prompt = "צייר עץ עם שמיים כחולים"
+//        });
+
+//        context.SaveChanges();
+//    }
+//}
 
 app.Run();

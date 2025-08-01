@@ -29,7 +29,7 @@ namespace server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Prompt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)

@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 
-public class User
+namespace DrawingApp.Models
 {
-    public Guid Id { get; set; }
-    public string Username { get; set; } = "";
-    public string? PasswordHash { get; set; }
-    public List<Drawing> Drawings { get; set; } = new();
+    public class User
+    {
+        public Guid Id { get; set; }
+        public string Username { get; set; } = "";
+        public string? PasswordHash { get; set; }
+        public List<Drawing> Drawings { get; set; } = new();
+    }
 }

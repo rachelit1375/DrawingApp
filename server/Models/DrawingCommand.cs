@@ -1,9 +1,12 @@
 using System;
 
-public class DrawingCommand
+namespace DrawingApp.Models
 {
-    public Guid Id { get; set; }
-    public Guid DrawingId { get; set; }
-    public string CommandJson { get; set; } = "";
-    public int Order { get; set; }  // לצורך Undo/Redo
+    public class DrawingCommand
+    {
+        public Guid Id { get; set; }
+        public Guid DrawingId { get; set; }
+        public string CommandJson { get; set; } = "";
+        public int Order { get; set; }  // לצורך Undo/Redo
+    }
 }
