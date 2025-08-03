@@ -21,7 +21,6 @@ namespace DrawingApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] User user)
         {
-            user.Id = Guid.NewGuid();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -29,7 +28,7 @@ namespace DrawingApp.Controllers
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUser(Guid userId)
+        public async Task<IActionResult> GetUser(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
             return user != null ? Ok(user) : NotFound();

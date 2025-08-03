@@ -4,16 +4,18 @@ import "../css/PromptInput.css";
 function PromptInput({ onSubmit }) {
     const [prompt, setPrompt] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!prompt.trim()) return;
 
-        // כאן נוכל בעתיד להמיר לפרומפט JSON דרך API
-        const mockDrawingCommands = [
-            { type: "circle", x: 100, y: 100, radius: 40, color: "yellow" }
-        ];
+        const response = await fetch("http://localhost:5150/api/prompt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: prompt, prevDrawings: [] })
+        });
+        const drawingCommands = await response.json();
 
-        onSubmit(prompt, mockDrawingCommands);
+        onSubmit(prompt, drawingCommands);
         setPrompt("");
     };
 

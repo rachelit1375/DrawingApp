@@ -3,8 +3,9 @@
     "",
     "\\Controllers",
     "\\Migrations",
-    "\\Models"
+    "\\Models",
+    "\\Services"
   ],
-  "SelectedNode": "\\Migrations\\20250731221506_InitialCreate.cs",
+  "SelectedNode": "\\Models\\AppDbContext.cs",
   "PreviewInSolutionExplorer": false
 }

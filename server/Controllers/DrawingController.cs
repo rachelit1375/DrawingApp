@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DrawingApp.Models;
 
-using System;
-
 namespace DrawingApp.Controllers
 {
     [ApiController]
@@ -19,9 +17,9 @@ namespace DrawingApp.Controllers
             _context = context;
         }
 
-        // שליפת כל הציורים של משתמש
+        // GET: api/drawing/user/5
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetDrawingsByUser(Guid userId)
+        public async Task<IActionResult> GetDrawingsByUser(int userId)
         {
             var drawings = await _context.Drawings
                 .Where(d => d.UserId == userId)
@@ -30,12 +28,11 @@ namespace DrawingApp.Controllers
             return Ok(drawings);
         }
 
-        // שליפת ציור ספציפי לפי מזהה
+        // GET: api/drawing/3
         [HttpGet("{drawingId}")]
-        public async Task<IActionResult> GetDrawing(Guid drawingId)
+        public async Task<IActionResult> GetDrawing(int drawingId)
         {
             var drawing = await _context.Drawings
-                //.Include(d => d.Id) // נוכל גם להוסיף Include של פקודות בעתיד
                 .FirstOrDefaultAsync(d => d.Id == drawingId);
 
             if (drawing == null)
@@ -44,29 +41,17 @@ namespace DrawingApp.Controllers
             return Ok(drawing);
         }
 
-        // שמירת ציור חדש
+        // POST: api/drawing
         [HttpPost]
         public async Task<IActionResult> SaveDrawing([FromBody] Drawing drawing)
         {
-            drawing.Id = Guid.NewGuid();  // ודא שאין כפילויות
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _context.Drawings.Add(drawing);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetDrawing), new { drawingId = drawing.Id }, drawing);
-        }
-
-        // מחיקת ציור
-        [HttpDelete("{drawingId}")]
-        public async Task<IActionResult> DeleteDrawing(Guid drawingId)
-        {
-            var drawing = await _context.Drawings.FindAsync(drawingId);
-            if (drawing == null)
-                return NotFound();
-
-            _context.Drawings.Remove(drawing);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
     }
 }

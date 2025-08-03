@@ -27,7 +27,7 @@ namespace server.Migrations
 
             modelBuilder.Entity("DrawingApp.Models.Drawing", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -39,10 +39,10 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
+                    b.Property<int?>("UserId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -56,7 +56,7 @@ namespace server.Migrations
 
             modelBuilder.Entity("DrawingApp.Models.DrawingCommand", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -64,7 +64,7 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DrawingId")
+                    b.Property<int>("DrawingId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Order")
@@ -79,7 +79,7 @@ namespace server.Migrations
 
             modelBuilder.Entity("DrawingApp.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 

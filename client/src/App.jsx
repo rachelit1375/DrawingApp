@@ -14,7 +14,7 @@ function App() {
   const handleNewPrompt = (prompt, commands) => {
     setDrawingCommands(commands);
     setChatMessages([...chatMessages, { type: "user", text: prompt }]);
-    setChatMessages((prev) => [...prev, { type: "bot", text: "ציור נוסף בצד ימין 🌸" }]);
+    setChatMessages((prev) => [...prev, { type: "bot", text: "ציור נוסף בצד ימין 🎨" }]);
   };
 
   const handleClear = () => {

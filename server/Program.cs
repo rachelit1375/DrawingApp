@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DrawingApp.Models;
+using DrawingApp.Controllers;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+builder.Services.AddHttpClient<PromptController>();
 
 var app = builder.Build();
 
@@ -46,8 +49,8 @@ app.MapControllers();
 //    {
 //        context.Drawings.Add(new Drawing
 //        {
-//            Id = Guid.NewGuid(),
-//            UserId = Guid.NewGuid(), // או ID של משתמש קיים אם יש
+//            Id = int.Newint(),
+//            UserId = int.Newint(), // או ID של משתמש קיים אם יש
 //            Name = "ציור בדיקה",
 //            Prompt = "צייר עץ עם שמיים כחולים"
 //        });

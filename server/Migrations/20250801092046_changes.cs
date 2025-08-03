@@ -11,13 +11,13 @@ namespace server.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<Guid>(
+            migrationBuilder.AlterColumn<int>(
                 name: "UserId",
                 table: "Drawings",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
-                oldClrType: typeof(Guid),
+                defaultValue: 123,
+                oldClrType: typeof(int),
                 oldType: "uniqueidentifier",
                 oldNullable: true);
         }
@@ -25,12 +25,12 @@ namespace server.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<Guid>(
+            migrationBuilder.AlterColumn<int>(
                 name: "UserId",
                 table: "Drawings",
                 type: "uniqueidentifier",
                 nullable: true,
-                oldClrType: typeof(Guid),
+                oldClrType: typeof(int),
                 oldType: "uniqueidentifier");
         }
     }
