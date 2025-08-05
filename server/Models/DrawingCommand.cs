@@ -5,7 +5,6 @@ namespace DrawingApp.Models
     public class DrawingCommand
     {
         public int Id { get; set; }
-        public int DrawingId { get; set; }
         public string Shape { get; set; } = "";
         public int? X { get; set; }
         public int? Y { get; set; }

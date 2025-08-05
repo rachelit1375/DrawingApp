@@ -1,21 +1,31 @@
 import React, { useState } from "react";
 import "../css/PromptInput.css";
 
-function PromptInput({ onSubmit }) {
+function PromptInput({ onSubmit, prevDrawings }) {
     const [prompt, setPrompt] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!prompt.trim()) return;
+        try {
+            const response = await fetch("http://localhost:5150/api/prompt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    prevDrawings: prevDrawings
+                })
+            });
 
-        const response = await fetch("http://localhost:5150/api/prompt", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: prompt, prevDrawings: [] })
-        });
-        const drawingCommands = await response.json();
+            const drawingCommands = await response.json();
+            console.log(drawingCommands);
 
-        onSubmit(prompt, drawingCommands);
+            onSubmit(prompt, drawingCommands);
+        }
+        catch (error) {
+            console.error("Error:", error);
+            onSubmit(prompt, [], false);
+        }
         setPrompt("");
     };
 

@@ -23,13 +23,6 @@ namespace DrawingApp.Models
                 .WithMany()
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // ÷ùø áéï Drawing ìÎDrawingCommand
-            modelBuilder.Entity<DrawingCommand>()
-                .HasOne<Drawing>()
-                .WithMany()
-                .HasForeignKey(dc => dc.DrawingId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

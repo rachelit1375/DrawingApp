@@ -8,29 +8,68 @@ function DrawingCanvas({ commands }) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!ctx) {
+      console.error("No canvas context!");
+      return;
+    }
+
+    console.log("commandsInCanvas ");
+    console.log(commands);
+
 
     commands.forEach((cmd) => {
-      switch (cmd.type) {
-        case "circle":
-          ctx.beginPath();
-          ctx.arc(cmd.x, cmd.y, cmd.radius, 0, Math.PI * 2);
-          ctx.fillStyle = cmd.color || "black";
-          ctx.fill();
-          break;
-        case "rect":
+      const shape = cmd.shape?.toLowerCase(); // Normalize shape string
+
+      switch (shape) {
+        case "rectangle":
           ctx.fillStyle = cmd.color || "black";
           ctx.fillRect(cmd.x, cmd.y, cmd.width, cmd.height);
           break;
-        case "line":
+
+        case "circle":
           ctx.beginPath();
-          ctx.moveTo(cmd.x1, cmd.y1);
-          ctx.lineTo(cmd.x2, cmd.y2);
-          ctx.strokeStyle = cmd.color || "black";
-          ctx.lineWidth = cmd.lineWidth || 2;
-          ctx.stroke();
+          ctx.arc(cmd.x, cmd.y, cmd.radius || 20, 0, Math.PI * 2);
+          ctx.fillStyle = cmd.color || "black";
+          ctx.fill();
           break;
-        // אפשר להוסיף עוד סוגים: ellipse, triangle וכו'
+
+        case "line":
+          if (cmd.from && cmd.to) {
+            ctx.beginPath();
+            ctx.moveTo(cmd.from[0], cmd.from[1]);
+            ctx.lineTo(cmd.to[0], cmd.to[1]);
+            ctx.strokeStyle = cmd.color || "black";
+            ctx.lineWidth = 2;
+            console.log(cmd.color)
+            ctx.stroke();
+          } else {
+            console.warn("Line command missing 'from' or 'to':", cmd);
+          }
+          break;
+
+        case "triangle": {
+          const topX = cmd.x;
+          const topY = cmd.y;
+          const width = cmd.width || 50;
+          const height = cmd.height || 50;
+
+          const leftX = topX - width / 2;
+          const leftY = topY + height;
+          const rightX = topX + width / 2;
+          const rightY = topY + height;
+
+          ctx.beginPath();
+          ctx.moveTo(topX, topY);
+          ctx.lineTo(leftX, leftY);
+          ctx.lineTo(rightX, rightY);
+          ctx.closePath();
+          ctx.fillStyle = cmd.color || "black";
+          ctx.fill();
+          break;
+        }
+
         default:
+          console.warn("Unknown shape:", cmd.shape);
           break;
       }
     });
@@ -38,7 +77,12 @@ function DrawingCanvas({ commands }) {
 
   return (
     <div className="canvas-wrapper">
-      <canvas ref={canvasRef} width={800} height={400} className="drawing-canvas" />
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={400}
+        className="drawing-canvas"
+      />
     </div>
   );
 }

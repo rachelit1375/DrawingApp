@@ -16,13 +16,15 @@ namespace DrawingApp.Controllers
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly string _geminiApiKey;
+        private readonly AppDbContext _context;
 
         private const string GeminiBaseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
-        public PromptController(HttpClient httpClient, IConfiguration configuration)
+        public PromptController(HttpClient httpClient, IConfiguration configuration, AppDbContext context)
         {
             _httpClient = httpClient;
             _configuration = configuration;
+            _context = context;
             _geminiApiKey = _configuration["Gemini:ApiKey"]
                 ?? throw new ArgumentNullException("Gemini:ApiKey not found in configuration.");
         }
@@ -52,8 +54,8 @@ namespace DrawingApp.Controllers
                                 text = @$"הציור הקיים הוא: {PrevDrawingsJson}.\n" +
 " הוסף את הבקשה החדשה:" +
 " המר את תיאור הציור הבא לרשימת JSON של אובייקטי `DrawingCommand`. אובייקטי `DrawingCommand` צריכים לכלול מאפיינים כגון `Shape` (מחרוזת, יכול להיות רק 'rectangle', 'circle', 'line' או 'triangle'), `X` (מספר שלם, מיקום אופקי), `Y` (מספר שלם, מיקום אנכי), `Radius` (מספר שלם, רדיוס עבור עיגול), `Width` (מספר שלם, רוחב עבור מלבן ומשולש), `Height` (מספר שלם, גובה עבור מלבן ומשולש), `Color` (מחרוזת, שם של צבע), `From` (מערך של שני מספרים שלמים [X, Y] לנקודת התחלה של קו), `To` (מערך של שני מספרים שלמים [X, Y] לנקודת סיום של קו). " +
-" עבור התיאור: '{description}'. " +
-" החזר רק את מערך ה-JSON, ללא טקסט נוסף, הסברים או תחומים של בלוק קוד Markdown. " +
+$" עבור התיאור: {request.Prompt}. " +
+" החזר רק את מערך ה-JSON, ללא טקסט נוסף, הסברים או תחומים של בלוק קוד Markdown." +
 " " +
 "**הנחיות קפדניות ליצירת ציורים מציאותיים וקוהרנטיים, תוך שימוש בדוגמאות הבאות:** " +
 " " +
@@ -76,7 +78,7 @@ namespace DrawingApp.Controllers
 " " +
 "5.  **אינטגרציה של אלמנטים חדשים (במקרה של בקשות המשך):** " +
 "    * כאשר מתבקש להוסיף אלמנט חדש לציור קיים, מקם את האלמנט החדש באופן הגיוני ביחס לאלמנטים שכבר צוירו. לדוגמה, אם יש כבר 'דשא ושמש', ואז מתבקש 'להוסיף אדם', האדם צריך לעמוד על הדשא ופונה לכיוון השמש או ביחס סביר אליה. **אל תמחק או תתעלם מאלמנטים קיימים.** " +
-" " +
+" * כאשר אתה מוסיף אלמנט חדש מסוג שכבר קיים בציור, עליך **לבחור עבורו מיקום שונה מהאלמנט הקיים** כדי למנוע חפיפה.* הימנע ממיקום חוזר (duplicate) – **אם קיים כבר אלמנט עם אותם מאפיינים (Shape, Width/Height/Radius, Color), שנה את מיקומו של החדש** כדי לבדל אותו. לדוגמה, אם כבר קיימת שמש אחת ב־(400,80), הוסף שמש נוספת ב־(300,60) או כל קואורדינטות אחרות מתאימות.* הקפד לא לחרוג מגבולות הקנבס: X בטווח 0–480, Y בטווח 0–380." +
 "6.  **ספריית דוגמאות מובנות:** " +
 "    **השתמש במבנה ה-JSON המדויק עבור אובייקטים נפוצים כפי שמפורט כאן. התאם את המיקומים (X, Y) כדי למקם אותם באופן לוגי על הקנבס לפי בקשת המשתמש, אך שמור על המבנה הפנימי והפרופורציות של רכיבי האובייקט.** " +
 " " +
@@ -159,26 +161,43 @@ $"דוגמת פלט JSON כללית: {drawingCommandExampleJson}"
                 response.EnsureSuccessStatusCode();
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("תשובת טקסט מ-Gemini:");
+
                 var geminiResponse = JsonSerializer.Deserialize<GeminiPromptResponse>(jsonResponse, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
                 var text = geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text ?? "";
+                Console.WriteLine("****לפני ניקוי" +text);
 
-                // ניקוי תגיות markdown אם קיימות
-                text = text.Trim();
                 if (text.StartsWith("```json"))
-                    text = text.Substring(7).Trim();
-                if (text.StartsWith("```"))
-                    text = text.Substring(3).Trim();
+                {
+                    // מוחק את ההתחלה ```json
+                    text = text.Substring("```json".Length).Trim();
+                }
+                else if (text.StartsWith("```"))
+                {
+                    // אם לא json אלא סתם ``` רגיל
+                    text = text.Substring("```".Length).Trim();
+                }
+
                 if (text.EndsWith("```"))
-                    text = text[..^3].Trim();
+                {
+                    // מוחק את הסוף ```
+                    text = text.Substring(0, text.Length - "```".Length).Trim();
+                }
+                Console.WriteLine("הטקסט לאחר ניקוי Markdown:\n" + text);
+
+
 
                 var commands = JsonSerializer.Deserialize<List<DrawingCommand>>(text, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
+
+                _context.DrawingCommands.AddRange(commands);
+                await _context.SaveChangesAsync();
 
                 return Ok(commands);
             }

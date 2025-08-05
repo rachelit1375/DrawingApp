@@ -3,9 +3,8 @@
     "",
     "\\Controllers",
     "\\Migrations",
-    "\\Models",
-    "\\Services"
+    "\\Models"
   ],
-  "SelectedNode": "\\Models\\AppDbContext.cs",
+  "SelectedNode": "\\Program.cs",
   "PreviewInSolutionExplorer": false
 }
