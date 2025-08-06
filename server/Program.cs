@@ -33,9 +33,6 @@ app.UseCors("AllowReactApp");
 // הפעלת ניתוב ל-HTTPS
 app.UseHttpsRedirection();
 
-// אם אין לך Authentication/Authorization, אפשר לוותר על השורה הזו
-// app.UseAuthorization();
-
 // מיפוי ה-Controllers (כל הפעולות מה-API)
 app.MapControllers();
 

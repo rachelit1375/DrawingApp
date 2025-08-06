@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using DrawingApp.Models;
 
 using System;
@@ -18,20 +19,41 @@ namespace DrawingApp.Controllers
             _context = context;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] User user)
         {
+            if (string.IsNullOrWhiteSpace(user.Username))
+                return BadRequest("Username is required");
+
+            if (string.IsNullOrWhiteSpace(user.Password))
+                return BadRequest("Password is required");
+
+            var existing = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == user.Username);
+
+            if (existing != null)
+                return Conflict("Username already taken");
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            return Ok(user); // מחזיר את המשתמש כולל Id
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] User login)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == login.Username);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            if (user.Password != login.Password)
+                return Unauthorized("Incorrect password");
 
             return Ok(user);
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUser(int userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            return user != null ? Ok(user) : NotFound();
-        }
     }
 }

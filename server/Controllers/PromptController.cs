@@ -161,7 +161,6 @@ $"דוגמת פלט JSON כללית: {drawingCommandExampleJson}"
                 response.EnsureSuccessStatusCode();
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("תשובת טקסט מ-Gemini:");
 
                 var geminiResponse = JsonSerializer.Deserialize<GeminiPromptResponse>(jsonResponse, new JsonSerializerOptions
                 {
@@ -169,7 +168,6 @@ $"דוגמת פלט JSON כללית: {drawingCommandExampleJson}"
                 });
 
                 var text = geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text ?? "";
-                Console.WriteLine("****לפני ניקוי" +text);
 
                 if (text.StartsWith("```json"))
                 {
@@ -187,9 +185,7 @@ $"דוגמת פלט JSON כללית: {drawingCommandExampleJson}"
                     // מוחק את הסוף ```
                     text = text.Substring(0, text.Length - "```".Length).Trim();
                 }
-                Console.WriteLine("הטקסט לאחר ניקוי Markdown:\n" + text);
-
-
+                Console.WriteLine("תשובת טקסט מג'מיני לאחר ניקוי:\n" + text);
 
                 var commands = JsonSerializer.Deserialize<List<DrawingCommand>>(text, new JsonSerializerOptions
                 {

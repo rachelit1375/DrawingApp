@@ -7,7 +7,6 @@ namespace DrawingApp.Models
     {
         public int Id { get; set; }
         public string Username { get; set; } = "";
-        public string? PasswordHash { get; set; }
-        public List<Drawing> Drawings { get; set; } = new();
+        public string Password { get; set; }
     }
 }

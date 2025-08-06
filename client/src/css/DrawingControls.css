@@ -20,3 +20,8 @@
 .drawing-controls button:hover {
     background-color: #357acb;
 }
+
+.drawing-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
