@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/DrawingControls.css";
+import { getUserDrawings } from "../services/api";
 
 function DrawingControls({ userId, onClear, onUndo, onRedo, onSave, onLoad }) {
     const [drawings, setDrawings] = useState([]);
@@ -7,8 +8,7 @@ function DrawingControls({ userId, onClear, onUndo, onRedo, onSave, onLoad }) {
 
     const fetchDrawings = async () => {
         try {
-            const res = await fetch(`http://localhost:5150/api/drawing/user/${userId}`);
-            const data = await res.json();
+            const data = await getUserDrawings(userId);
             setDrawings(data);
         } catch (err) {
             console.error("שגיאה בטעינת הציורים:", err);
@@ -24,8 +24,8 @@ function DrawingControls({ userId, onClear, onUndo, onRedo, onSave, onLoad }) {
     const handleSelectChange = (e) => {
         const value = e.target.value;
         if (value === "__refresh__") {
-            fetchDrawings(); // רענון הרשימה
-            setSelectedId(""); // לא לבחור כלום לאחר הרענון
+            fetchDrawings();
+            setSelectedId("");
         } else {
             setSelectedId(value);
         }

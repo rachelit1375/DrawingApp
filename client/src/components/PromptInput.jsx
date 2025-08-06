@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../css/PromptInput.css";
+import { sendPrompt } from "../services/api";
 
 function PromptInput({ onSubmit, prevDrawings }) {
     const [prompt, setPrompt] = useState("");
@@ -8,21 +9,9 @@ function PromptInput({ onSubmit, prevDrawings }) {
         e.preventDefault();
         if (!prompt.trim()) return;
         try {
-            const response = await fetch("http://localhost:5150/api/prompt", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    prompt: prompt,
-                    prevDrawings: prevDrawings
-                })
-            });
-
-            const drawingCommands = await response.json();
-            console.log(drawingCommands);
-
+            const drawingCommands = await sendPrompt(prompt, prevDrawings);
             onSubmit(prompt, drawingCommands);
-        }
-        catch (error) {
+        } catch (error) {
             console.error("Error:", error);
             onSubmit(prompt, [], false);
         }

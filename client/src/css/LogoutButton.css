@@ -1,0 +1,23 @@
+.logout-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: #292929;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.logout-button:hover {
+    color: #252525;
+    text-decoration: none;
+}

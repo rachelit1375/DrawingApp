@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { registerUser } from "../services/api";
 
 function RegisterForm({ onRegister, onSwitch }) {
     const [username, setUsername] = useState("");
@@ -6,22 +7,13 @@ function RegisterForm({ onRegister, onSwitch }) {
     const [error, setError] = useState("");
 
     const handleRegister = async () => {
-        const response = await fetch("http://localhost:5150/api/user/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-        });
-
-        if (!response.ok) {
-            const message = await response.text();
-            setError(message || "שגיאה בהרשמה");
-            return;
+        try {
+            const user = await registerUser({ username, password });
+            onRegister(user);
+        } catch (err) {
+            setError(err.message);
         }
-
-        const user = await response.json();
-        onRegister(user);
     };
-
 
     return (
         <div className="form register-form">
@@ -32,14 +24,12 @@ function RegisterForm({ onRegister, onSwitch }) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
-
             <input
                 type="password"
                 placeholder="סיסמה"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-
             <button onClick={handleRegister}>הירשם</button>
             {error && <p className="error">{error}</p>}
             <p className="switch-link">

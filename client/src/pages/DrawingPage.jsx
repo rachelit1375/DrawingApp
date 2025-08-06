@@ -3,6 +3,8 @@ import PromptInput from "../components/PromptInput";
 import DrawingCanvas from "../components/DrawingCanvas";
 import DrawingControls from "../components/DrawingControls";
 import ChatHistory from "../components/ChatHistory";
+import LogoutButton from "../components/LogoutButton";
+import { saveDrawing, loadDrawing } from "../services/api";
 
 function DrawingPage({ user }) {
     const [drawingsHistory, setDrawingsHistory] = useState([[]]);
@@ -79,21 +81,14 @@ function DrawingPage({ user }) {
             const drawingName = prompt("הזן שם לציור:", "ללא שם");
             if (!drawingName) return;
 
-            const res = await fetch("http://localhost:5150/api/drawing", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    userId: user.id,
-                    name: drawingName,
-                    prompt: promptHistory.slice(0, currentIndex + 1).join("\n"),
-                    commandJson: JSON.stringify(drawingsHistory.slice(0, currentIndex + 1))
-                }),
+            await saveDrawing({
+                userId: user.id,
+                name: drawingName,
+                prompt: promptHistory.slice(0, currentIndex + 1).join("\n"),
+                commandJson: JSON.stringify(drawingsHistory.slice(0, currentIndex + 1))
             });
 
-            if (!res.ok) throw new Error(await res.text());
-
             setLastSavedIndex(currentIndex);
-            const saved = await res.json();
             setChatMessages(prev => [
                 ...prev,
                 { type: "bot", text: "הציור נשמר בהצלחה✅" }
@@ -108,10 +103,7 @@ function DrawingPage({ user }) {
 
     const handleLoadDrawing = async (drawingId) => {
         try {
-            const res = await fetch(`http://localhost:5150/api/drawing/${drawingId}`);
-            if (!res.ok) throw new Error("שגיאה בטעינת הציור");
-
-            const drawing = await res.json();
+            const drawing = await loadDrawing(drawingId);
             const parsedCommands = JSON.parse(drawing.commandJson);
 
             setDrawingsHistory(parsedCommands);
@@ -131,8 +123,13 @@ function DrawingPage({ user }) {
         }
     };
 
+    const handleLogout = () => {
+        window.location.reload(); // טוען מחדש את האפליקציה ומאפס את ה־user
+    };
+
     return (
         <div className="app-container">
+            <LogoutButton onLogout={handleLogout} />
             <div className="left-panel">
                 <h2 className="chat-title">הצ'אט שלך עם הבוט 💬</h2>
                 <ChatHistory messages={chatMessages} />

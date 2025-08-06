@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { loginUser } from "../services/api";
 
 function LoginForm({ onLogin, onSwitch }) {
     const [username, setUsername] = useState("");
@@ -6,22 +7,13 @@ function LoginForm({ onLogin, onSwitch }) {
     const [error, setError] = useState("");
 
     const handleLogin = async () => {
-        const response = await fetch("http://localhost:5150/api/user/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-        });
-
-        if (!response.ok) {
-            const message = await response.text();
-            setError(message || "שגיאה בהתחברות");
-            return;
+        try {
+            const user = await loginUser({ username, password });
+            onLogin(user);
+        } catch (err) {
+            setError(err.message);
         }
-
-        const user = await response.json();
-        onLogin(user);
     };
-
 
     return (
         <div className="form login-form">
@@ -32,7 +24,6 @@ function LoginForm({ onLogin, onSwitch }) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
-
             <input
                 type="password"
                 placeholder="סיסמה"
